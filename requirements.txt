@@ -4,4 +4,6 @@ matplotlib
 numpy 
 pymongo
 certifi
+scikit-learn
+pymongo[srv]==3.12
 # -e .
