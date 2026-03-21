@@ -1,7 +1,8 @@
 from src.components.data_ingestion import DataIngestion
 from src.components.data_validation import DataValidation
 from src.components.data_transformation import DataTransformation
-from src.entity.config_entity import DataIngestionConfig , Training_Pipeline_Config , DataValidationConfig , DataTransformationConfig
+from src.components.model_trainer import ModelTrainer
+from src.entity.config_entity import DataIngestionConfig , Training_Pipeline_Config , DataValidationConfig , DataTransformationConfig,ModelTrainerConfig
 import sys
 from src.logging.logger import logging
 from src.exception.exception import CustomException
@@ -35,6 +36,14 @@ if __name__=='__main__':
         data_transformation_artifact=data_transformation.initiate_data_transformation()
         logging.info('Completed Data Transformation')
         print(data_transformation_artifact)
+        
+        
+        # Data Transformation Process
+        logging.info('Initiate Model Training')
+        modelTrainerConfig = ModelTrainerConfig(training_pipeline_config)
+        model_trainer=ModelTrainer(data_transformation_artifact=data_transformation_artifact,model_trainer_config=modelTrainerConfig)
+        model_trainer_artifact=model_trainer.initiate_model_trainer()
+        print(model_trainer_artifact)
         
     except Exception as e:
         raise CustomException(e,sys)

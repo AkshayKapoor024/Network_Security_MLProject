@@ -7,5 +7,6 @@ certifi
 scikit-learn
 dill
 pyaml
+xgboost
 pymongo[srv]==3.12
 # -e .
