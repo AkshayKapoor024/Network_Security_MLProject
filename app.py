@@ -70,6 +70,7 @@ async def predict(request:Request,file:UploadFile=File(...)):
         print(y_preds)
         df['Predicted_column']=y_preds
         print(df['Predicted_column'])
+        os.makedirs("prediction_output", exist_ok=True)
         df.to_csv('prediction_output/output.csv')
         table_html = df.to_html(classes='table table_striped')
         return templates.TemplateResponse('table.html',{'request':request,'table':table_html})
