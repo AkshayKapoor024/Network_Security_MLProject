@@ -99,7 +99,7 @@ def evaluate_model(x_train,y_train,x_test,y_test,models,params):
             
             param = params[list(models.keys())[i]]
             
-            rcv = RandomizedSearchCV(estimator=model,param_distributions=param,cv=3,n_jobs=-1,refit=True,scoring='accuracy')
+            rcv = RandomizedSearchCV(estimator=model,param_distributions=param,cv=3,refit=True,scoring='accuracy')
             
             rcv.fit(x_train,y_train)
             

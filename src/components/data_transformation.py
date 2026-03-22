@@ -57,6 +57,11 @@ class DataTransformation:
             train_df = DataTransformation.read_data(self.data_validation_artifact.valid_train_file_path)
             test_df = DataTransformation.read_data(self.data_validation_artifact.valid_test_file_path)
             
+            print("VALIDATION STATUS:", self.data_validation_artifact.validation_status)
+            print("TRAIN PATH:", self.data_validation_artifact.valid_train_file_path)
+            print("TEST PATH:", self.data_validation_artifact.valid_test_file_path)
+            
+            
             logging.info('Seperating input and output features for train and test data!')
             # Seperating Target Feature from train dataframe 
             input_feature_train_df = train_df.drop(columns=[TARGET_COLUMN],axis=1)
@@ -93,6 +98,10 @@ class DataTransformation:
             logging.info('Saving preprocessor object')
             # Saving Preprocessor object inside the filepath
             save_object(self.data_transformation_config.transformed_object_file_path,preprocessor_object) 
+            # Saving final preprocessor for training pipeline
+            os.makedirs('final_model',exist_ok=True)
+            save_object('final_model/preprocessor.pkl',obj=preprocessor_object)
+            
             
             logging.info('Data Validation successful')
             # Preparing Data Transformation Artifact

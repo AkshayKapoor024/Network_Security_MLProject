@@ -19,7 +19,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier,GradientBoostingClassifier
 from xgboost import XGBRFClassifier
 
+from dotenv import load_dotenv
+load_dotenv()
 
+import mlflow
 # Main Model training Class 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -28,6 +31,18 @@ class ModelTrainer:
             self.data_transformation_artifact = data_transformation_artifact
         except Exception as e:
             raise CustomException(e,sys)
+    # Helper method for MLFlow tracking experiment
+    def track_mlflow(self,model,classification_metrics_train):
+         with mlflow.start_run():
+             f1_score=classification_metrics_train.f1_score
+             precision_score=classification_metrics_train.precision_score
+             recall_score=classification_metrics_train.recall_score
+             
+             mlflow.log_metric("f1 score",f1_score)
+             mlflow.log_metric("precision score",recall_score)
+             mlflow.log_metric("recall score",precision_score)
+             mlflow.sklearn.log_model(model,"best_model")
+             
     # Helper function that trains multiple models 
     def train_model(self,x_train,y_train,x_test,y_test):
         # Defining Models to train
@@ -99,10 +114,13 @@ class ModelTrainer:
         logging.info('Building CLassification report for best model')
         classification_metrics_train = get_classification_score(y_train,y_train_preds)
         
-        # Track the ML Flow
+        # Track the ML Flow - used to track the ml experiments for train data
+        self.track_mlflow(best_model,classification_metrics_train)
         
         y_test_preds = best_model.predict(x_test)
         classification_metrics_test = get_classification_score(y_test,y_test_preds)
+        # Track the ML Flow - used to track the ml experiments for test data
+        self.track_mlflow(best_model,classification_metrics_train)
         
         logging.info('Retrieved Preprocessor object file')
         # Retrieving Preprocessor .pkl file
@@ -116,6 +134,10 @@ class ModelTrainer:
         
         logging.info('Saving final model')
         save_object(model_file_path,obj=final_model)
+        
+        # Saving final model for training pipeline
+        os.makedirs('final_model',exist_ok=True)
+        save_object('final_model/model.pkl',obj=final_model)
         
         # Creating Model trainer artifact
         logging.info('Created and Returned Model Trainer Artifact')

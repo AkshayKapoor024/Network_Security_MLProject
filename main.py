@@ -7,7 +7,11 @@ import sys
 from src.logging.logger import logging
 from src.exception.exception import CustomException
 import os 
+from dotenv import load_dotenv
+load_dotenv()
 
+import dagshub
+dagshub.init(repo_name=os.getenv('DAGSHUB_REPO_NAME'),repo_owner=os.getenv('DAGSHUB_REPO_OWNER'),mlflow=True)
 # Performing Data Ingestion from scratch through main file 
 if __name__=='__main__':
     try:
